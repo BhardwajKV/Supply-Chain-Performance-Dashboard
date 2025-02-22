@@ -1,0 +1,91 @@
+ Supply Chain Performance Dashboard
+
+Objective
+The Supply Chain Performance Dashboard is designed to provide real-time insights** into key supply chain metrics such as order fulfillment, inventory turnover, stock levels, and demand forecasting. 
+The goal is to help businesses:  
+1) Optimize inventory management  
+2) Reduce stockouts and overstock situations  
+3) Improve order fulfillment efficiency  
+4) Forecast demand trends for better planning  
+
+Process & Data Flow
+
+1️. Data Collection & Storage 
+   - Extracted data from **historical sales, inventory, and supplier records**.  
+   - Used a Dimension and fact tables (e.g., Order, Suppliers, Inventory).  
+
+2️. Data Cleaning & Transformation
+   - Handled the date consistency using the power Query.  
+   - And did the data modelling among the dimension and the facts table
+   - Created the required DAX query like:
+     ✔ Date Table
+     ✔ Inventory Turnover Ratio
+     ✔ Reorder Alert
+     ✔ Order Fulfillment Rate (%)  
+     ✔ On Time delivery
+     ✔ Average Lead Time 
+
+
+3️. Dashboard Development (Power BI) 
+   - Built interactive visuals to analyze supply chain efficiency:  
+     - Gauge Chart → Tracks order fulfillment rate  
+     - Line Chart → Shows inventory turnover trends  
+     - Bar Charts → Analyzes stock levels by category  
+     - Conditional Formatting → Highlights critical reorder alerts  
+
+ 
+ Interpretation & Insights
+
+🔹 Order Fulfillment Rate (38%) → Indicates efficiency in delivering orders on time. Low values suggest delays in supplier performance.  
+
+🔹 Stock Level Alerts (Table with Red Highlights) → Identifies products that need immediate restocking to avoid lost sales.  
+
+🔹 Inventory Turnover Trend (Line Chart) → Shows seasonal fluctuations, helping businesses optimize stock replenishment cycles.  
+
+🔹 Demand Forecasting (Using ML & Trends Data) → Enables predictive analytics for inventory planning based on historical & real-time trends.  
+
+Key Technologies Used 
+- Power BI → Data visualization & analytics  
+- DAX → Custom measures & calculated fields  
+
+      1.Date Time : DateTable =  
+ADDCOLUMNS(
+    CALENDAR(DATE(2024, 02, 15), DATE(2025, 02, 25)),  
+    "Year", YEAR([Date]),
+    "Month", FORMAT([Date], "MMMM"),  -- Full Month Name (January, February, etc.)
+    "Month Number", MONTH([Date]),  -- Numeric Month (1-12)
+    "Quarter", "Q" & FORMAT([Date], "Q"),  -- Quarter (Q1, Q2, etc.)
+    "Week Number", WEEKNUM([Date]),  -- Week of the Year
+    "Day of Week", FORMAT([Date], "dddd"),  -- Day Name (Monday, Tuesday, etc.)
+    "Day of Week Number", WEEKDAY([Date])  -- Numeric Day (1 = Sunday, 7 = Saturday))
+
+2. Inventory Turnover = 
+DIVIDE(
+    SUM(Orders[Order_ID]), 
+    AVERAGE(Inventory[Stock_Level]), 
+    0)
+
+3. Reorder Alert = IF(
+    SUM(Inventory[Stock_Level]) <= SUM(Inventory[Reorder_Point]),"Need to Reorder", "Sufficient Goods")
+
+4. On time Delivery = 
+var total_orders= COUNT(Orders[Order_ID])
+VAR On_Time_delivery = COUNTROWS(FILTER(Orders,Orders[Shipment_Date] <= Orders[Shipment_Date]+5))
+
+RETURN
+DIVIDE(On_Time_delivery,total_orders,0)*100
+
+5. Average Cost Per Order = AVERAGE(Suppliers[Cost_Per_Order])
+
+6. Average Lead time = AVERAGE(Suppliers[Lead_Time])
+
+7. Lead Time Alert = IF(SELECTEDVALUE(Suppliers[Lead_Time]) > [Average Lead time], "🔴" ,"🟢")
+
+Result:
+The final Dashboard
+
+
+
+
+
+ 
