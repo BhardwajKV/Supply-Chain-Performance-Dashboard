@@ -81,8 +81,6 @@ DIVIDE(On_Time_delivery,total_orders,0)*100
 
 7. Lead Time Alert = IF(SELECTEDVALUE(Suppliers[Lead_Time]) > [Average Lead time], "🔴" ,"🟢")
 
-Result:
-The final Dashboard
 
 
 
